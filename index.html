@@ -53,15 +53,16 @@
     
     <button class="btn" onclick="window.history.back();"><i class="fa fa-arrow-left"></i></button>
       <div class="w3-display-topleft w3-padding-large w3-xlarge">
-    </select>
+    
       </div>
       <div class="w3-display-middle">
         <h1 class="w3-jumbo w3-animate-top" style="text-align: center;">Bem vindo ao tempo real!</h1>
         <hr class="w3-border-grey">
         <p id="realTime"></p>
         <p class="w3-large w3-center">Selecione um local para saber o horário atual:    
-          <select id="selectedLocal" onchange="fillOnChangeInfo()">
+		<select id="selectedLocal" onchange="fillOnChangeInfo()">
             <option value="undefined"></option>
+		</select>
         </p>        
       </div>
     </div>
