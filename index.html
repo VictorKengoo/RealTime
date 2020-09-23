@@ -45,43 +45,24 @@
       font-size : 48px;
     }
 
-    .button {
-      padding: 10px 15px;
-      font-size: 24px;
-      text-align: center;
-      cursor: pointer;
-      outline: none;
-      color: #fff;
-      background-color: dodgerblue;
-      border: none;
-      border-radius: 15px;
-      box-shadow: 0 9px #999;
-      margin-top: 10px;
-    }
-
-    .button:hover {background-color: lightskyblue}
-
-    .button:active {
-      background-color: dodgerblue;
-      box-shadow: 0 5px #666;
-      transform: translateY(4px);
-    }
-
   </style>
   
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <body>
-    <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">    
+  <body onload="getAllTimeZones()">
+    <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">
+    
     <button class="btn" onclick="window.history.back();"><i class="fa fa-arrow-left"></i></button>
       <div class="w3-display-topleft w3-padding-large w3-xlarge">
+    </select>
       </div>
-      <div class="w3-display-middle" style="text-align: center;">
+      <div class="w3-display-middle">
         <h1 class="w3-jumbo w3-animate-top" style="text-align: center;">Bem vindo ao tempo real!</h1>
         <hr class="w3-border-grey">
         <p id="realTime"></p>
-        <p class="w3-large w3-center" id="selectedLocalP">Selecione um local para saber o horário atual:
-        </p>
-        <button class="button" onclick="getAllTimeZones()">Carregar locais!</button>
+        <p class="w3-large w3-center">Selecione um local para saber o horário atual:    
+          <select id="selectedLocal" onchange="fillOnChangeInfo()">
+            <option value="undefined"></option>
+        </p>        
       </div>
     </div>
 
@@ -99,23 +80,25 @@
 
       function getAllTimeZones() {
         var theUrl = 'http://worldtimeapi.org/api/timezone/';
-        fetch(theUrl).then(response => response.json())
-        .then(
-          data => addOptionTags(data)
-        );
+        if (document.getElementById('selectedLocal').value == "undefined") {
+          fetch(theUrl).then(response => response.json())
+          .then(
+            data => addOptionTags(data)
+          );
+        }
       }
 
       function addOptionTags(timeZones) {
         var html = '';
-        html += '<select id="selectedLocal" onchange="fillOnChangeInfo()" data-native-menu="false" > <option value="undefined"></option>';
+        
         for (var currentZone in timeZones) {
             html += '<option value="'+timeZones[currentZone]+'">' + timeZones[currentZone] + '</option>';
         }
-        html += '</select>';
-        document.getElementById('selectedLocalP').innerHTML = 'Selecione um local para saber o horário atual: ' + html;
+        document.getElementById('selectedLocal').innerHTML += html;
       }
 
       function fillOnChangeInfo () {
+        getAllTimeZones();
         saveLocal = document.getElementById('selectedLocal').value;
         today = Date.apply().split(' ');
         currentLocalTime = today[4];
