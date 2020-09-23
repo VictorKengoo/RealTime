@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+  <title>Real Time</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+  <style>
+    body,h1 {
+        font-family: "Raleway", sans-serif
+    }
+    body, html {
+        height: 100%
+    }
+    .bgimg {
+        background-image: url('https://images2.alphacoders.com/677/677143.jpg');
+        min-height: 100%;
+        background-position: center;
+        background-size: cover;
+    }
+
+    #realTime {
+      box-sizing: border-box;
+      border-radius: 5px;
+      font-family: sans-serif;
+      text-align: center;
+      font-size: xx-large;
+    }
+
+    #selectLocal {
+      box-sizing: border-box;
+      border-radius: 5px;
+      font-family: sans-serif;
+      text-align: center;
+      font-size: xx-large;
+    }
+
+    .btn {
+      background-color: transparent;
+      border: none;
+      color: white;
+      padding: 12px 16px;
+      cursor: pointer;
+      border-radius: 50%;
+      font-size : 48px;
+    }
+
+    .button {
+      padding: 10px 15px;
+      font-size: 24px;
+      text-align: center;
+      cursor: pointer;
+      outline: none;
+      color: #fff;
+      background-color: dodgerblue;
+      border: none;
+      border-radius: 15px;
+      box-shadow: 0 9px #999;
+      margin-top: 10px;
+    }
+
+    .button:hover {background-color: lightskyblue}
+
+    .button:active {
+      background-color: dodgerblue;
+      box-shadow: 0 5px #666;
+      transform: translateY(4px);
+    }
+
+  </style>
+  
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <body>
+    <div class="bgimg w3-display-container w3-animate-opacity w3-text-white">    
+    <button class="btn" onclick="window.history.back();"><i class="fa fa-arrow-left"></i></button>
+      <div class="w3-display-topleft w3-padding-large w3-xlarge">
+      </div>
+      <div class="w3-display-middle" style="text-align: center;">
+        <h1 class="w3-jumbo w3-animate-top" style="text-align: center;">Bem vindo ao tempo real!</h1>
+        <hr class="w3-border-grey">
+        <p id="realTime"></p>
+        <p class="w3-large w3-center" id="selectedLocalP">Selecione um local para saber o horário atual:
+        </p>
+        <button class="button" onclick="getAllTimeZones()">Carregar locais!</button>
+      </div>
+    </div>
+
+    <script>
+      
+      var saveLocal = "";
+      var today = Date.apply().split(' ');
+      var currentLocalTime = today[4];
+
+      function keepReloading() {
+        if (document.getElementById("realTime").style.display != "none") {
+          setTimeout(getSpecificTimeZone(), 1000000);
+        }        
+      }
+
+      function getAllTimeZones() {
+        var theUrl = 'http://worldtimeapi.org/api/timezone/';
+        fetch(theUrl).then(response => response.json())
+        .then(
+          data => addOptionTags(data)
+        );
+      }
+
+      function addOptionTags(timeZones) {
+        var html = '';
+        html += '<select id="selectedLocal" onchange="fillOnChangeInfo()" data-native-menu="false" > <option value="undefined"></option>';
+        for (var currentZone in timeZones) {
+            html += '<option value="'+timeZones[currentZone]+'">' + timeZones[currentZone] + '</option>';
+        }
+        html += '</select>';
+        document.getElementById('selectedLocalP').innerHTML = 'Selecione um local para saber o horário atual: ' + html;
+      }
+
+      function fillOnChangeInfo () {
+        saveLocal = document.getElementById('selectedLocal').value;
+        today = Date.apply().split(' ');
+        currentLocalTime = today[4];
+        getSpecificTimeZone();
+      }
+
+      function getSpecificTimeZone() {
+        var theUrl = 'http://worldtimeapi.org/api/timezone/' + document.getElementById('selectedLocal').value;
+        if (document.getElementById('selectedLocal').value != "undefined") {
+          fetch(theUrl).then(response => response.json())
+          .then(
+            data => changeCurrentTime(data)
+          );
+        } else {          
+          document.getElementById("realTime").style.display = "none";
+        }
+      }
+
+      function changeCurrentTime(info) {
+        var data = info.datetime.split('T');
+        var realTime = data[1].split('.');
+
+        document.getElementById('realTime').innerHTML = 'Horário (tempo real) em ' + info.timezone + ': ' + realTime[0];        
+        document.getElementById('realTime').innerHTML += '<br>Horário da requisição: ' + currentLocalTime;
+        document.getElementById("realTime").style.display = "block";   
+        
+        //setTimeout(keepReloading(), 1000000);
+      }
+
+      function returnOriginalPage() {
+
+      }
+    </script>
+
+  </body>
+</html>
